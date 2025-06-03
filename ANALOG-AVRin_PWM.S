@@ -11,15 +11,18 @@
 .EQU LED_PIN, PB1     ; OC1A = PB1 = pino digital 9
 .EQU POT_PIN, PC0     ; ADC0 = PC0 = pino analógico 0
 
+.DATA
+    microTime: .BYTE 0x0A
+
 ; --- Vetor de Reset ---
 .ORG 0x0000
     RJMP main          ; Salta para o início do programa
 
-; Vetor de interrupção ADC (não utilizado aqui)
+; Vetor de interrupção ADC (não utilizado aqui) <- feito por IA
 .ORG 0x002A
     RETI
 
-.section .text
+.SECTION .TEXT
 .GLOBAL Main
 
 ; --- Início do programa ---
@@ -34,6 +37,10 @@ Main:
 
     ; --- Configura o pino OC1A como saída (PB1 / D9) ---
     SBI _SFR_IO_ADDR(DDRB), LED_PIN
+    ; --- Limpa o pino (PB1 / D9) ---
+    IN r17, _SFR_IO_ADDR(PINB)
+    SBRS r17, 0x01
+    CBI _SFR_IO_ADDR(PORTB), LED_PIN
 
     ; --- Configuração do ADC ---
     ; Referência = AVcc com capacitor no AREF, entrada = ADC0 (PC0)
@@ -84,7 +91,7 @@ wait_adc:
     STS _SFR_MEM_ADDR(OCR1AH), r17
 
     ; Pequeno atraso para estabilidade (opcional)
-    LDI r18, 10
+    LDS r18, microTime
 delay_loop:
     DEC r18
     BRNE delay_loop
