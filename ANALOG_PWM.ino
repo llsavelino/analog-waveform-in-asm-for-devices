@@ -1,5 +1,5 @@
 extern "C" { void Main(void); }
-void setup               (void) 
+static void setup        (void) 
 {
 
   while                  (true)
@@ -8,5 +8,5 @@ void setup               (void)
   }
 
 }
-void loop                (void) 
+static void loop         (void) 
 {                             }
