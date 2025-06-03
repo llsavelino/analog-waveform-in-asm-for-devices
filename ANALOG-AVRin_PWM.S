@@ -1,3 +1,5 @@
+; Feito grande parte por auxilo da IA, Créditos totais ao DeepSeek 🐋🐳
+
 ; Controle de potência usando PWM com valor de potenciômetro
 ; PWM de 10 bits no modo Fast PWM
 ; PWM no pino OC1A (PB1 / D9), entrada analógica no pino ADC0 (PC0 / A0)
