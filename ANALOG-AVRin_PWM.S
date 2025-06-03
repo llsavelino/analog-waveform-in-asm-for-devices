@@ -41,6 +41,7 @@ Main:
     IN r17, _SFR_IO_ADDR(PINB)
     SBRS r17, 0x01
     CBI _SFR_IO_ADDR(PORTB), LED_PIN
+    CLR r17
 
     ; --- Configuração do ADC ---
     ; Referência = AVcc com capacitor no AREF, entrada = ADC0 (PC0)
