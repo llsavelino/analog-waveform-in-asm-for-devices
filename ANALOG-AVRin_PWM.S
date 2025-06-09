@@ -58,14 +58,10 @@ adc_isr:
 ; --- Início do programa ---
 Main:
     ; --- Inicialização da pilha ---
-    LDI r16, hi8(RAMEND)
-    OUT _SFR_IO_ADDR(SPH), r16
-    LDI r16, lo8(RAMEND)
-    OUT _SFR_IO_ADDR(SPL), r16
+    RCALL stack_init
 
     ; --- Configura o pino OC1A como saída (PB1 / D9) ---
-    SBI _SFR_IO_ADDR(DDRB), LED_PIN
-    CBI _SFR_IO_ADDR(PORTB), LED_PIN  ; Garante início em LOW
+    RCALL hardware_init
 
     ; --- Configuração do ADC ---
     ; Referência = AVcc, entrada = ADC0 (PC0)
@@ -101,26 +97,44 @@ main_loop:
     STS _SFR_MEM_ADDR(ADCSRA), r16
 
     ; Espera a conversão terminar (Polling)
-wait_adc:
-    LDS r16, _SFR_MEM_ADDR(ADCSRA)
-    SBRC r16, ADSC
-    RJMP wait_adc
+    
+    wait_adc:
+        LDS r16, _SFR_MEM_ADDR(ADCSRA)
+        SBRC r16, ADSC
+        RJMP wait_adc
 
-    ; Lê valor do ADC (10 bits)
-    LDS r16, _SFR_MEM_ADDR(ADCL)
-    LDS r17, _SFR_MEM_ADDR(ADCH)
+        ; Lê valor do ADC (10 bits)
+        LDS r16, _SFR_MEM_ADDR(ADCL)
+        LDS r17, _SFR_MEM_ADDR(ADCH)
 
-    ; Atualiza PWM
-    STS _SFR_MEM_ADDR(OCR1AL), r16
-    STS _SFR_MEM_ADDR(OCR1AH), r17
+        ; Atualiza PWM
+        STS _SFR_MEM_ADDR(OCR1AL), r16
+        STS _SFR_MEM_ADDR(OCR1AH), r17
 
-    ; Pequeno atraso (opcional)
-    LDS r18, microTime
-delay_loop:
-    DEC r18
-    BRNE delay_loop
+        ; Pequeno atraso (opcional)
+        LDS r18, microTime
+    
+    delay_loop:
+        DEC r18
+        BRNE delay_loop
 
-    RJMP main_loop   ; Repete indefinidamente
+        RJMP main_loop   ; Repete indefinidamente
+
+stack_init:
+
+    LDI r16, hi8(RAMEND)
+    OUT _SFR_IO_ADDR(SPH), r16
+    LDI r16, lo8(RAMEND)
+    OUT _SFR_IO_ADDR(SPL), r16
+
+    RET
+
+hardware_init:
+
+    SBI _SFR_IO_ADDR(DDRB), LED_PIN
+    CBI _SFR_IO_ADDR(PORTB), LED_PIN  ; Garante início em LOW
+
+    RET
 
 ; Label para salvar o contexto
 push_context:
@@ -158,6 +172,7 @@ push_context:
     PUSH    r31
     IN      r16, _SFR_IO_ADDR(SREG)           ; Salva SREG
     PUSH    r16
+
     RET
 
 ; Label para restaurar o contexto
@@ -196,4 +211,5 @@ pop_context:
     POP     r2
     POP     r1
     POP     r0
+
     RET
