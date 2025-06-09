@@ -9,7 +9,7 @@
 ; Inclui definições como DDRB, PORTB, RAMEND, etc.
 
 ; Definições para facilitar leitura
-.EQU LED_PIN, PB1     ; OC1A = PB1 = pino digital 9
+.EQU PWM_PIN, PB1     ; OC1A = PB1 = pino digital 9
 .EQU POT_PIN, PC0     ; ADC0 = PC0 = pino analógico 0
 
 .DATA
@@ -135,8 +135,8 @@ stack_init:
 
 hardware_init:
 
-    SBI _SFR_IO_ADDR(DDRB), LED_PIN
-    CBI _SFR_IO_ADDR(PORTB), LED_PIN  ; Garante início em LOW
+    SBI _SFR_IO_ADDR(DDRB), PWM_PIN
+    CBI _SFR_IO_ADDR(PORTB), PWM_PIN  ; Garante início em LOW
 
     RET
 
