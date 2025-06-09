@@ -113,12 +113,16 @@ main_loop:
 
         ; Pequeno atraso (opcional)
         LDS r18, microTime
+        RCALL delay_loop
+
+        RJMP main_loop   ; Repete indefinidamente
     
     delay_loop:
+
         DEC r18
         BRNE delay_loop
 
-        RJMP main_loop   ; Repete indefinidamente
+        RET
 
 stack_init:
 
