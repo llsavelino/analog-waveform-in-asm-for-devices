@@ -32,25 +32,26 @@
 ; ** Rotina de Interrupção do ADC (opcional) **
 ; =============================================
 adc_isr:
+
+    NOP
     ; Salva registradores (obrigatório em ISRs)
-    PUSH r16
-    PUSH r17
-    IN r16, _SFR_IO_ADDR(SREG)
-    PUSH r16
+    RCALL push_context
+
 
     ; Lê valor do ADC (10 bits)
+
     LDS r16, _SFR_MEM_ADDR(ADCL)
     LDS r17, _SFR_MEM_ADDR(ADCH)
 
     ; Atualiza PWM
+
     STS _SFR_MEM_ADDR(OCR1AL), r16
     STS _SFR_MEM_ADDR(OCR1AH), r17
 
+
     ; Restaura registradores
-    POP r16
-    OUT _SFR_IO_ADDR(SREG), r16
-    POP r17
-    POP r16
+    RCALL pop_context
+    NOP
 
     RETI   ; Retorna da interrupção
 
@@ -120,3 +121,79 @@ delay_loop:
     BRNE delay_loop
 
     RJMP main_loop   ; Repete indefinidamente
+
+; Label para salvar o contexto
+push_context:
+    PUSH    r0
+    PUSH    r1
+    PUSH    r2
+    PUSH    r3
+    PUSH    r4
+    PUSH    r5
+    PUSH    r6
+    PUSH    r7
+    PUSH    r8
+    PUSH    r9
+    PUSH    r10
+    PUSH    r11
+    PUSH    r12
+    PUSH    r13
+    PUSH    r14
+    PUSH    r15
+    PUSH    r16
+    PUSH    r17
+    PUSH    r18
+    PUSH    r19
+    PUSH    r20
+    PUSH    r21
+    PUSH    r22
+    PUSH    r23
+    PUSH    r24
+    PUSH    r25
+    PUSH    r26
+    PUSH    r27
+    PUSH    r28
+    PUSH    r29
+    PUSH    r30
+    PUSH    r31
+    IN      r16, _SFR_IO_ADDR(SREG)           ; Salva SREG
+    PUSH    r16
+    RET
+
+; Label para restaurar o contexto
+pop_context:
+    POP     r16
+    OUT     _SFR_IO_ADDR(SREG), r16           ; Restaura SREG
+    POP     r31
+    POP     r30
+    POP     r29
+    POP     r28
+    POP     r27
+    POP     r26
+    POP     r25
+    POP     r24
+    POP     r23
+    POP     r22
+    POP     r21
+    POP     r20
+    POP     r19
+    POP     r18
+    POP     r17
+    POP     r16
+    POP     r15
+    POP     r14
+    POP     r13
+    POP     r12
+    POP     r11
+    POP     r10
+    POP     r9
+    POP     r8
+    POP     r7
+    POP     r6
+    POP     r5
+    POP     r4
+    POP     r3
+    POP     r2
+    POP     r1
+    POP     r0
+    RET
