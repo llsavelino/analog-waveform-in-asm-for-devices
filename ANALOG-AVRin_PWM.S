@@ -1,4 +1,4 @@
-; Feito grande parte com auxilo da IA, Créditos totais ao DeepSeek 🐋🐳
+; Configuração de timers feito por IA, Créditos totais ao DeepSeek 🐋🐳
 
 ; Controle de potência usando PWM com valor de potenciômetro
 ; PWM de 10 bits no modo Fast PWM
